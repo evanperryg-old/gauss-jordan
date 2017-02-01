@@ -7,19 +7,6 @@
  * more efficient, as well. This is purely for my own enrichment; if it
  * provides some value to someone out there, all the better.
  * 
- * PSEUDOCODE:
- * 1)ask for the number of variables we're solving for. Make an array[n][n+1],
- *   where n is the number of variables to solve for.
- * 2)ask for the array elements. Store in aforementioned array.
- * 3)display the array. Is it correct? If not, prompt for row and column to fix.
- *   Keep doing this until user says it's correct.
- * 4)divide rows 1 thru n by their column 1 element. 
- * 5)subtract row 1 from rows 2 thru n.
- * 6)divide rows 2 thru n by their column 2.
- * 7)subtract row 2 from rows 3 thru n.
- * 8)you should see the pattern here.
- * 9)once you've finished doing that for all rows, display the approximated
- *   row echelon form of the matrix. We're not quite to RREF, but REF's cool, too.
  */
 
 #include <iostream>
@@ -28,6 +15,7 @@ using namespace std;
 
 int main() 
 {
+    int mode = 0;
     cout << "\033[2J\033[1;1H";                             // clear the screen
     // is it necessary to keep turning ASCII colors on and off here? nah, not really.
     cout << "\033[1;34m****************************************\033[0m\n";
@@ -36,6 +24,18 @@ int main()
     cout << "\033[1;34m*        Evan Perry Grove   2017       *\033[0m\n";
     cout << "\033[1;34m*                                      *\033[0m\n";
     cout << "\033[1;34m****************************************\033[0m\n" << endl;
+    cout << "\033[1;37mPlease select an option from below." << endl;
+    cout << "0) Standard Mode: Output the REF and RREF matrices." << endl;
+    cout << "1) Verbose Mode: Show human-friendly steps taken to reach REF and RREF." << endl;
+    cout << "2) Extra Verbose Mode: Show the matrix after each step. (not recommended)" << endl;
+    cin >> mode;
+    
+    if(mode > 3 || mode < 0)
+    {
+        cout << "Invalid mode specified. Default is Standard Mode (0)." << endl;
+        mode = 0;
+    }
+    
     cout << "\033[1;37mHow many variables are we solving for? ";
     int n;
     cin >> n;                                               // initialize and set n
@@ -50,7 +50,7 @@ int main()
         }
     }
     
-    // prompt the user for each element. This can be simplified massively, at the expense of a not-so-pretty interface.
+    // prompt the user for each element. This can be simplified massively, at the expense of having a not-so-pretty interface.
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j <= n; j++)
@@ -106,8 +106,6 @@ int main()
         cin >> correct;
     }
 
-    
-    
     // get the REF form of the matrix. c is used to represent the column of the element we are making zero
     for (int c = 0; c < n-1; c++)
     {
@@ -125,8 +123,27 @@ int main()
                     //in English: divide every row i by its element in column i.
                     matrix[i][j] = matrix[i][j] / divisor;
                 }
-                if (divisor !=  1) {
-                    cout << "R" << i+1 << "<- R" << i+1 << " / " << divisor << endl;                                // comment this out if you don't want to show the steps
+                if (divisor !=  1) 
+                {
+                    switch (mode)
+                    {
+                        case 0:
+                            break;
+                        case 1:
+                            cout << "R" << i+1 << "<- R" << i+1 << " / " << divisor << endl;
+                            break;
+                        case 2:
+                            cout << "R" << i+1 << "<- R" << i+1 << " / " << divisor << endl;
+                            for (int idisp = 0; idisp < n; idisp++)
+                                {
+                                    for (int jdisp = 0; jdisp <= n; jdisp++)
+                                    {
+                                        cout << setw(12) <<  matrix[idisp][jdisp];   // spit out elements of row i
+                                    }
+                                    cout << endl;                                    // go to next row and continue spitting out things
+                                }
+                            break;
+                    }
                 }
             }
         }
@@ -141,7 +158,25 @@ int main()
             {
                 matrix[i][j] = matrix[i][j] - (matrix[c][j] * multiplier);
             }
-            cout << "R" << i << "<- R" << i+1 << " - (R" << c+1 << " * " << multiplier << ")" << endl;              // comment this out if you don't want to show the steps
+            switch (mode)
+            {
+                case 0:
+                    break;
+                case 1:
+                    cout << "R" << i+1 << "<- R" << i+1 << " - (R" << c+1 << " * " << multiplier << ")" << endl;
+                    break;
+                case 2:
+                    cout << "R" << i+1 << "<- R" << i+1 << " - (R" << c+1 << " * " << multiplier << ")" << endl;
+                    for (int idisp = 0; idisp < n; idisp++)
+                    {
+                        for (int jdisp = 0; jdisp <= n; jdisp++)
+                        {
+                            cout << setw(12) <<  matrix[idisp][jdisp];   // spit out elements of row i
+                        }
+                        cout << endl;                                    // go to next row and continue spitting out things
+                    }
+                    break;
+            }
         }
             
     }
@@ -155,8 +190,27 @@ int main()
             {
                 matrix[i][j] = matrix[i][j] / divisor;
             }
-            if (divisor !=  1) {
-                cout << "R" << i+1 << "<- R" << i+1 << " / " << divisor << endl;
+            if (divisor !=  1) 
+            {
+                switch (mode)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        cout << "R" << i+1 << "<- R" << i+1 << " / " << divisor << endl;
+                        break;
+                    case 2:
+                        cout << "R" << i+1 << "<- R" << i+1 << " / " << divisor << endl;
+                        for (int idisp = 0; idisp < n; idisp++)
+                            {
+                                for (int jdisp = 0; jdisp <= n; jdisp++)
+                                {
+                                    cout << setw(12) <<  matrix[idisp][jdisp];   // spit out elements of row i
+                                }
+                                cout << endl;                                    // go to next row and continue spitting out things
+                            }
+                        break;
+                }
             }
         }
     }
@@ -187,7 +241,25 @@ int main()
                     matrix[i][j] = matrix[i][j] / divisor;
                 }
                 if (divisor !=  1) {
-                    cout << "R" << i+1 << "<- R" << i+1 << " / " << divisor << endl;                                // comment this out if you don't want to show the steps
+                    switch (mode)
+                    {
+                        case 0:
+                            break;
+                        case 1:
+                            cout << "R" << i+1 << "<- R" << i+1 << " / " << divisor << endl;
+                            break;
+                        case 2:
+                            cout << "R" << i+1 << "<- R" << i+1 << " / " << divisor << endl;
+                            for (int idisp = 0; idisp < n; idisp++)
+                            {
+                                for (int jdisp = 0; jdisp <= n; jdisp++)
+                                {
+                                    cout << setw(12) <<  matrix[idisp][jdisp];   // spit out elements of row i
+                                }
+                                cout << endl;                                    // go to next row and continue spitting out things
+                            }
+                            break;
+                    }
                 }
             }
         }
@@ -199,7 +271,25 @@ int main()
             {
                 matrix[i][j] = matrix[i][j] - (matrix[c][j] * multiplier);
             }
-            cout << "R" << i+1 << "<- R" << i+1 << " - (R" << c+1 << " * " << multiplier << ")" << endl;            // comment this out if you don't want to show the steps
+            switch (mode)
+            {
+                case 0:
+                    break;
+                case 1:
+                    cout << "R" << i+1 << "<- R" << i+1 << " - (R" << c+1 << " * " << multiplier << ")" << endl;
+                    break;
+                case 2:
+                    cout << "R" << i+1 << "<- R" << i+1 << " - (R" << c+1 << " * " << multiplier << ")" << endl;
+                    for (int idisp = 0; idisp < n; idisp++)
+                    {
+                        for (int jdisp = 0; jdisp <= n; jdisp++)
+                        {
+                            cout << setw(12) <<  matrix[idisp][jdisp];   // spit out elements of row i
+                        }
+                        cout << endl;                                    // go to next row and continue spitting out things
+                    }
+                    break;
+            }
         }
             
     }
@@ -208,13 +298,26 @@ int main()
     for (int i = 0; i < n; i++)
     {
         double divisor = matrix[i][i];
-        if (divisor != 0) {
-            for (int j = 0; j <= n; j++)
+        if (divisor !=  1) 
+        {
+            switch (mode)
             {
-                matrix[i][j] = matrix[i][j] / divisor;
-            }
-            if (divisor !=  1) {
+                case 0:
+                    break;
+                case 1:
                     cout << "R" << i+1 << "<- R" << i+1 << " / " << divisor << endl;
+                    break;
+                case 2:
+                    cout << "R" << i+1 << "<- R" << i+1 << " / " << divisor << endl;
+                    for (int idisp = 0; idisp < n; idisp++)
+                    {
+                        for (int jdisp = 0; jdisp <= n; jdisp++)
+                        {
+                            cout << setw(12) <<  matrix[idisp][jdisp];   // spit out elements of row i
+                        }
+                        cout << endl;                                    // go to next row and continue spitting out things
+                    }
+                    break;
             }
         }
     }
