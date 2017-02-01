@@ -9,4 +9,4 @@ Contents:
     
     
 Known Issues:
-    rref_approx.cpp: If any of the elements (1,1) (2,2) etc are equal to zero, the correct REF and RREF forms are not returned.
+    rref_approx.cpp: If any of the diagonal elements (1,1) (2,2) etc are equal to zero, the correct REF and RREF forms are not returned.
