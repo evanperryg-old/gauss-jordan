@@ -28,7 +28,7 @@ using namespace std;
 
 int main() 
 {
-    cout << "\033[2J\033[1;1H";                             // this is just a clear screen, but ASCII's weird way of doing it
+    cout << "\033[2J\033[1;1H";                             // clear the screen
     // is it necessary to keep turning ASCII colors on and off here? nah, not really.
     cout << "\033[1;34m****************************************\033[0m\n";
     cout << "\033[1;34m*                                      *\033[0m\n";
