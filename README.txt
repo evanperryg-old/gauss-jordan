@@ -5,7 +5,8 @@ This repository contains some matrix algorithms based on Gauss-Jordan. Everythin
 
 Contents:
 ./
-    rref_approx.cpp: returns the reduced echelon form (REF) and the reduced row echelon Form (RREF) of an augmented matrix specified by user inputs. Also shows the exact steps it took to reach the results.
+    rref_approx.cpp   returns the reduced echelon form (REF) and the reduced row echelon Form (RREF) of an augmented matrix specified by user inputs. Also shows the exact steps it took to reach the results.
+    determinant.cpp   finds the determinant of the inputted matrix.
     
     
 Known Issues:
