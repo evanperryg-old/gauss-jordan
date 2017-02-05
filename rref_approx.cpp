@@ -7,6 +7,33 @@
  * more efficient, as well. This is purely for my own enrichment; if it
  * provides some value to someone out there, all the better.
  * 
+ * Step-by step descriptions of how this all works can be found in the algorithm
+ * itself, but here's a quick synopsis of how it works:
+ * 
+ * 
+ * 2) Divide every row k by its k'th element (row one gets divided by its column
+ *    1 element, row 2 gets divided by its column 2 element, etc)
+ * 3) For p = 1, subtract from each row n > p the value of row p times row n's
+ *    column p value.
+ * 4) Repeat step 2.
+ * 5) Repeat step 3, but this time make p = 2.
+ * 6) Repeat steps 4 and 5, adding 1 to p each time until p = n. You now have the 
+ *    REF form of the matrix.
+ * 7) Repeat step 2.
+ * 8) For p = the number of rows, subtract from each row n < p the value of row
+ *    p times row n's column p value.
+ * 9) Repeat steps 7 and 8, subtracting 1 from p each time until p = 1. You now
+ *    have the RREF form of the matrix,
+ * 
+ * Here's a visualization of what's happening. the matrix below shows the pivots
+ * as "p," these are the elements we're dividing stuff by in step 1. The numbered
+ * elements represent the order in which they are subtracted from their row,
+ * getting their respective element to zero. the solution solumn is marked wxyz:
+ * 
+ * p   12  10  7   w
+ * 3   p   11  8   x
+ * 2   5   p   9   y
+ * 1   4   6   p   z
  */
 
 #include <iostream>
@@ -16,7 +43,6 @@ int main()
 {
     int mode = 0;
     cout << "\033[2J\033[1;1H";                             // clear the screen
-    // is it necessary to keep turning ASCII colors on and off here? nah, not really.
     cout << "\033[1;34m****************************************\033[0m\n";
     cout << "\033[1;34m*                                      *\033[0m\n";
     cout << "\033[1;34m*  Reduced Row Echelon Form Algorithm  *\033[0m\n";
@@ -96,6 +122,7 @@ int main()
     cin >> correct;
     while (correct == 'n')
     {
+        
         cout << endl << "\033[1;31mEnter a correction: \n"; 
         cout << "\033[1;37mrow:"; cin >> fixrow; cout << endl;
         cout << "\033[1;37mcol:"; cin >> fixcol; cout << endl;
@@ -104,7 +131,100 @@ int main()
         cout << endl << "\033[1;31mIs this correct? (y/n) \033[1;37m";
         cin >> correct;
     }
-
+    
+    //here we ensure that each element we want to use as a pivot contains a nonzero value. Switch rows in order to get
+    //nonzeros into the columns we need.
+    bool pivotsClean = true;
+    int dirtyPivots = 0;
+    int dirtyPivotsOld = 0;
+    while (pivotsClean)
+    {
+        for (int pivotCheck = 0; pivotCheck < n - 1; pivotCheck++)
+        {
+            if(matrix[pivotCheck][pivotCheck] == 0)
+            {
+                dirtyPivots++;
+                double dirtyRow[n+1];
+                for (int i = 0; i <= n; i++)
+                {
+                    dirtyRow[i] = matrix[pivotCheck][i];
+                    
+                    if (pivotCheck == n)
+                    {
+                        matrix[pivotCheck][i] = matrix[0][i];
+                    }
+                    else
+                    {
+                        matrix[pivotCheck][i] = matrix[pivotCheck + 1][i];
+                    }
+                }
+                for (int i = 0; i <= n; i++)
+                {
+                    if (pivotCheck == n)
+                    {
+                        matrix[0][i] = dirtyRow[i];
+                    }
+                    else
+                    {
+                        matrix[pivotCheck + 1][i] = dirtyRow[i];
+                    }
+                }
+                switch(mode)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        if (pivotCheck == n)
+                        {
+                            cout << "R" << pivotCheck + 1 << "<- R0" << endl << "R0<- R" << pivotCheck + 1<< endl;
+                        }
+                        else
+                        {
+                            cout << "R" << pivotCheck + 1 << "<- R" << pivotCheck + 2 << endl << "R" << pivotCheck + 2 << "<- R" << pivotCheck + 1<< endl;
+                        }
+                        break;
+                    case 2:
+                        if (pivotCheck == n)
+                        {
+                            cout << "R" << pivotCheck + 1 << "<- R0" << endl << "R0<- R" << pivotCheck + 1<< endl;
+                            for (int idisp = 0; idisp < n; idisp++)
+                            {
+                                for (int jdisp = 0; jdisp <= n; jdisp++)
+                                {
+                                    
+                                    cout << setw(12) <<  matrix[idisp][jdisp];   // spit out elements of row i
+                                }
+                                cout << endl;                                    // go to next row and continue spitting out things
+                            }
+                        }
+                        else
+                        {
+                            cout << "R" << pivotCheck + 1 << "<- R" << pivotCheck + 2 << endl << "R" << pivotCheck + 2 << "<- R" << pivotCheck + 1<< endl;
+                            for (int idisp = 0; idisp < n; idisp++)
+                            {
+                                for (int jdisp = 0; jdisp <= n; jdisp++)
+                                {
+                                    
+                                    cout << setw(12) <<  matrix[idisp][jdisp];   // spit out elements of row i
+                                }
+                                cout << endl;                                    // go to next row and continue spitting out things
+                            }
+                        }
+                        break;
+                }
+            }
+        }
+        
+        if (dirtyPivots == dirtyPivotsOld)
+        {
+            pivotsClean = false;
+        }
+        else
+        {
+            dirtyPivotsOld = dirtyPivots;
+        }
+    }
+    
     // get the REF form of the matrix. c is used to represent the column of the element we are making zero
     for (int c = 0; c < n-1; c++)
     {
