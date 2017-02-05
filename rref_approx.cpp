@@ -69,7 +69,7 @@ int main()
                 cout << endl;                                    // go to next row and continue spitting out things
             }
         
-            cout << endl <<   "Row " << i+1 << "   Column " << j+1 << "\033[1;37    Value: ";
+            cout << endl <<   "Row " << i+1 << "   Column " << j+1 << "    Value: ";
             cin >> matrix[i][j];                                 // user inputs each element's value.
         }
     }
