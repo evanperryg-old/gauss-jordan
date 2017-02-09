@@ -10,6 +10,7 @@
 #include <vector>
 #include <cmath>
 
+//it's fine to use std because we aren't using any funky non-std libraries
 using namespace std;
 
 int minCt = 0;
