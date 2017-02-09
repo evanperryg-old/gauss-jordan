@@ -6,7 +6,7 @@ compiled using g++ on Kubuntu 16.04.
 
 Contents:
 ./
-    rref_approx.cpp   returns the reduced echelon form (REF) and the reduced
+    rref_approx.cpp   returns the row echelon form (REF) and the reduced
         row echelon Form (RREF) of an augmented matrix specified by user 
         inputs using Gauss-Jordan elimination. Also shows the exact steps it 
         took to reach the results.
